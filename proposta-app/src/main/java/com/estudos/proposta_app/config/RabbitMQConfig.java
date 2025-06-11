@@ -18,7 +18,10 @@ public class RabbitMQConfig {
     private ConnectionFactory connectionFactory;
 
     @Value("${rabbit.propostapendente.exchange}")
-    private String exchange;
+    private String exchangePropostaPendente;
+
+    @Value("${rabbit.propostaconcluida.exchange}")
+    private String exchangePropostaConcluida;
 
     public RabbitMQConfig(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
@@ -29,7 +32,7 @@ public class RabbitMQConfig {
         return new RabbitAdmin(connectionFactory);
     }
 
-//RabbitTemplate naop tem o conversor, entao foi preciso criar para que o mesmo possa converter
+// -- RabbitTemplate nao tem o conversor, entao foi preciso criar para que o mesmo possa converter ----
     @Bean
     public MessageConverter messageConverter(){
         return new Jackson2JsonMessageConverter();
@@ -40,7 +43,7 @@ public class RabbitMQConfig {
         rabbitTemplate.setMessageConverter(messageConverter());
         return rabbitTemplate;
     }
-
+// ------------------------------------------------------------------------------------
 
     //classe responsavel pela aplicaçao tenha permissao para realizar operaçoes no RabbitMq
     @Bean
@@ -82,11 +85,18 @@ public class RabbitMQConfig {
     }
 
 
-    /*Criando as Exchanges e o Binding(junção da fila da Exchange)*/
+// ---- Criando as Exchanges e o Binding(junção da fila da Exchange) ---
     @Bean
     public FanoutExchange criarFanoutExchangePropostaPendente(){
         return ExchangeBuilder
-                .fanoutExchange(exchange)
+                .fanoutExchange(exchangePropostaPendente)
+                .build();
+    }
+
+    @Bean
+    public FanoutExchange criarFanoutExchangePropostaConcluida(){
+        return ExchangeBuilder
+                .fanoutExchange(exchangePropostaConcluida)
                 .build();
     }
 
@@ -97,7 +107,6 @@ public class RabbitMQConfig {
                 .to(criarFanoutExchangePropostaPendente());
     }
 
-
     @Bean
     public Binding criarBindingPropostaPendenteMsNotificacao(){
         return BindingBuilder
@@ -105,4 +114,18 @@ public class RabbitMQConfig {
                 .to(criarFanoutExchangePropostaPendente());
     }
 
+    @Bean
+    public Binding criarBindingPropostaPendenteMsPropostaApp(){
+        return BindingBuilder
+                .bind(criarFilaPropostaConcluidaMsProposta())
+                .to(criarFanoutExchangePropostaPendente());
+    }
+
+    @Bean
+    public Binding criarBindingPropostaConcluidaMSNNotificacao(){
+        return BindingBuilder
+                .bind(criarFilaPropostaConcluidaMsProposta())
+                .to(criarFanoutExchangePropostaConcluida());
+    }
+// ------------------------------------------------------------------------------------
 }
