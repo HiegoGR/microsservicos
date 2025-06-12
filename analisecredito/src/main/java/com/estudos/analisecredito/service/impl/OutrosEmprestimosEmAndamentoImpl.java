@@ -2,10 +2,13 @@ package com.estudos.analisecredito.service.impl;
 
 import com.estudos.analisecredito.domain.Proposta;
 import com.estudos.analisecredito.service.strategy.CalculoPonto;
+import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
-public class OutrosEmprestimosEmAndamento implements CalculoPonto {
+
+@Component
+public class OutrosEmprestimosEmAndamentoImpl implements CalculoPonto {
 
 
     @Override

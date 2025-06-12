@@ -2,8 +2,10 @@ package com.estudos.analisecredito.service.impl;
 
 import com.estudos.analisecredito.domain.Proposta;
 import com.estudos.analisecredito.service.strategy.CalculoPonto;
+import org.springframework.stereotype.Component;
 
-public class PrazoPagamento implements CalculoPonto {
+@Component
+public class PrazoPagamentoImpl implements CalculoPonto {
 
     @Override
     public int calcular(Proposta proposta) {

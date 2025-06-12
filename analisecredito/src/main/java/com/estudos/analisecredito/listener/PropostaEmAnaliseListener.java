@@ -1,33 +1,20 @@
 package com.estudos.analisecredito.listener;
 
 import com.estudos.analisecredito.domain.Proposta;
-import com.estudos.notificao.domain.Proposta;
-import com.estudos.notificao.domain.Usuario;
-import com.estudos.notificao.service.NotificacaoSnsService;
-import com.estudos.notificao.service.UsuarioService;
-import com.estudos.notificao.utils.SmsConstante;
+import com.estudos.analisecredito.service.strategy.AnaliseCreditoService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
-@Component
-public class PropostaPendenteListener {
-
-    @Autowired
-    private NotificacaoSnsService notificacaoSnsService;
+@Configuration
+public class PropostaEmAnaliseListener {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private AnaliseCreditoService analiseCreditoService;
 
-
-    // configurando um ouvite, tudo que esta entrando nessa fila, ele fica ouvindo
     @RabbitListener(queues = "${rabbitmq.queue.proposta.pendente}")
-    public void propostaPendente(Proposta proposta){
-        Usuario usuario = usuarioService.buscarUsuarioPorId(proposta.getUsuarioId());
-
-        String mensagem = String.format(SmsConstante.PROPOSTA_EM_ANALISE, usuario.getNome());
-
-        notificacaoSnsService.notificar(usuario.getTelefone(), mensagem);
+    public void propostaEmAnalise(Proposta proposta){
+        analiseCreditoService.analisar(proposta);
     }
 
 }

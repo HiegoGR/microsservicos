@@ -5,8 +5,10 @@ import com.estudos.analisecredito.domain.Usuario;
 import com.estudos.analisecredito.service.UsuarioService;
 import com.estudos.analisecredito.service.strategy.CalculoPonto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class RendaMaiorValorSolicitado implements CalculoPonto {
+@Component
+public class RendaMaiorValorSolicitadoImpl implements CalculoPonto {
 
     @Autowired
     private UsuarioService usuarioService;

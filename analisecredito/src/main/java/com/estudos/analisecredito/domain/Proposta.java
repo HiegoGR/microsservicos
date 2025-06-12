@@ -1,5 +1,12 @@
-package com.estudos.notificao.domain;
+package com.estudos.analisecredito.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Proposta {
 
     private Long id;

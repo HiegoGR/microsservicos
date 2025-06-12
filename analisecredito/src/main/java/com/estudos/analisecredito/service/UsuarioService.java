@@ -1,6 +1,6 @@
-package com.estudos.notificao.service;
+package com.estudos.analisecredito.service;
 
-import com.estudos.notificao.domain.Usuario;
+import com.estudos.analisecredito.domain.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,5 +19,10 @@ public class UsuarioService {
     public Usuario buscarUsuarioPorId(Long id) {
         String url = urlBasePropostaAppUsuario + id;
         return restTemplate.getForObject(url, Usuario.class);
+    }
+
+    public String buscarUsuarioPorIdRetornaNome(Long id) {
+        String url = urlBasePropostaAppUsuario + id;
+        return  restTemplate.getForObject(url, Usuario.class).getNome();
     }
 }
