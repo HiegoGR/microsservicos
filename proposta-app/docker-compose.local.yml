@@ -2,18 +2,6 @@ version: '3.9'
 
 services:
 
-  proposta-app:
-    build: .                      # Usa o Dockerfile no diretório atual
-    container_name: proposta-app
-    depends_on:
-      - rabbitmq
-      - postgres
-    ports:
-      - "8080:8080"               # Exponha a porta do Spring Boot
-    restart: on-failure
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod  #  Ativa o perfil dev para carregar application-prod.properties
-
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq

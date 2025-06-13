@@ -66,6 +66,7 @@ public class RabbitMQConfig {
                 .durable("proposta-pendente.ms-analise-credito")
                 //.maxLength(2L) pode colocar o maximo de mensagem na fila, caso tiver mais alguma vai para DLQ
                 //.ttl(10000) // dados da fila seja consumida em ate 10segundos, caso contrario vai para DLQ
+                //.maxPriority(10) // definindo a prioridade maxima
                 .deadLetterExchange("proposta-pendente-dlx.ex") // liga a DLX
                 .build();
     }

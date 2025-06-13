@@ -6,6 +6,7 @@ import com.estudos.proposta_app.mapper.PropostaMapper;
 import com.estudos.proposta_app.repository.PropostaRepository;
 import com.estudos.proposta_app.service.event.NotificacaoProducerService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,7 @@ public class PropostaService {
         proposta = propostaRepository.save(proposta);
 
         PropostaDTO response = propostaMapper.toDTO(proposta);
+        //criarPrioridadeEmRelacaoRendaDoCLienteParaFila(proposta);
         notificarFilaRabbitMq(response);
 
         return response;
@@ -49,6 +51,30 @@ public class PropostaService {
             response.setIntegrada(false);
             propostaRepository.save(propostaMapper.toEntity(response));
         }
+
+    }
+
+    private void notificarFilaRabbitMqComPrioridade(PropostaDTO response, MessagePostProcessor messagePostProcessor){
+        try {
+            notificacao.notificarComPrioridade(response,exchange, messagePostProcessor);
+        }catch (RuntimeException ex){
+            response.setIntegrada(false);
+            propostaRepository.save(propostaMapper.toEntity(response));
+        }
+
+    }
+
+    // coloca cliente com prioridade 10 sempre no incio da fila, para isso precisa ter configurado .maxPriority(10) no criarFilaPropostaPendenteMsAnaliseCredito
+    private void criarPrioridadeEmRelacaoRendaDoCLienteParaFila(Proposta proposta){
+        int prioridadeUsuario = proposta.getUsuario().getRenda() > 10000 ? 10 : 5;
+
+        MessagePostProcessor messagePostProcessor = message -> {
+            message.getMessageProperties().setPriority(prioridadeUsuario);
+
+            return message;
+        };
+
+        notificarFilaRabbitMqComPrioridade(propostaMapper.toDTO(proposta), messagePostProcessor);
 
     }
 
