@@ -23,8 +23,14 @@ public class PorpostaConcluidaListener {
     //consome tudo que esta vindo dessa fila e salva na base de dados
     @RabbitListener(queues = "${rabbitmq.queue.proposta.concluida}")
     public void propostaConcluida(PropostaDTO propostaDto){
-        Proposta proposta = propostaMapper.toEntity(propostaDto);
-        propostaRepository.save(proposta);
+        Proposta proposta = atualizarProposta(propostaMapper.toEntity(propostaDto));
+
         webSocketService.notificar(propostaMapper.toDTO(proposta));
+    }
+
+    public Proposta atualizarProposta(Proposta proposta){
+        return propostaRepository.atualizarDadosDeProposta(proposta.getId(),
+                                                    proposta.isAprovada(),
+                                                    proposta.getObservacao());
     }
 }

@@ -20,7 +20,7 @@ public class PropostaSemIntegracaoScheduled {
         this.propostaService = propostaService;
     }
 
-    @Scheduled(fixedDelay = 120, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
     public void agendamentoPropostaSemIntegracao(){
         log.info("agendamento Proposta Sem Integracao a cada x horas");
         propostaService.propostaSemIntegracao();
