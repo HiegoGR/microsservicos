@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PropostaPendenteListener {
+public class PropostaConcluidaListener {
 
     @Autowired
     private NotificacaoSnsService notificacaoSnsService;
@@ -20,13 +20,16 @@ public class PropostaPendenteListener {
 
 
     // configurando um ouvite, tudo que esta entrando nessa fila, ele fica ouvindo
-    @RabbitListener(queues = "${rabbitmq.queue.proposta.pendente}")
+    @RabbitListener(queues = "${rabbitmq.queue.proposta.concluida}")
     public void propostaPendente(Proposta proposta){
         Usuario usuario = usuarioService.buscarUsuarioPorId(proposta.getUsuarioId());
 
-        String mensagem = String.format(SmsConstante.PROPOSTA_EM_ANALISE, usuario.getNome());
+        String mensagem = proposta.isAprovada()
+                ? String.format(SmsConstante.PROPOSTA_CONCLUIDA_SUCESSO, usuario.getNome())
+                : String.format(SmsConstante.PROPOSTA_CONCLUIDA_ERRO, usuario.getNome());
 
         notificacaoSnsService.notificar(usuario.getTelefone(), mensagem);
+
     }
 
 }
