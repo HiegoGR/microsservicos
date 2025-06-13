@@ -31,7 +31,7 @@ public class AnaliseCreditoService {
 
             proposta.setAprovada(pontuacao > 350);
 
-        } catch (ResponseStatusException ex){
+        } catch (ResponseStatusException ex) {
             proposta.setAprovada(false);
             proposta.setObservacao(ex.getMessage());
         }
